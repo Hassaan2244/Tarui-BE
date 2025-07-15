@@ -51,9 +51,16 @@ const Transaction = sequelize.define("Transaction", {
     },
 });
 
+// models/Transaction.js
 Transaction.associate = (models) => {
     Transaction.belongsTo(models.User, { foreignKey: "userId" });
-    Transaction.belongsTo(models.Ledger, { foreignKey: "ledgerId" });
+
+    Transaction.belongsTo(models.Ledger, {
+        foreignKey: "ledgerId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    });
 };
+  
 
 module.exports = Transaction;

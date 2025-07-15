@@ -1,4 +1,3 @@
-const db = require('./config/db');
 const { dbUser, dbPass, dbName, dbHost } = require('./api/vars');
 
 module.exports = {
