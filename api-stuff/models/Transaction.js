@@ -45,15 +45,27 @@ const Transaction = sequelize.define("Transaction", {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
+    preparedBy: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "admin",
+    },    
     selectedProducts: {
         type: DataTypes.JSONB,
         allowNull: true,
     },
 });
 
+// models/Transaction.js
 Transaction.associate = (models) => {
     Transaction.belongsTo(models.User, { foreignKey: "userId" });
-    Transaction.belongsTo(models.Ledger, { foreignKey: "ledgerId" });
+
+    Transaction.belongsTo(models.Ledger, {
+        foreignKey: "ledgerId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    });
 };
+  
 
 module.exports = Transaction;

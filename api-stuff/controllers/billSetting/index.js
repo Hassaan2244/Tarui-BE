@@ -3,7 +3,7 @@ const { BillSetting } = require("../../models");
 
 exports.createSetting = async (req, res) => {
     try {
-        const { icon, name, email, phone, address } = req.body;
+        const { icon, name, email, phone, address, preparedBy } = req.body;
 
         const existing = await BillSetting.findOne({ where: { userId: req.user.id } });
         if (existing) {
@@ -20,6 +20,7 @@ exports.createSetting = async (req, res) => {
             email,
             phone,
             address,
+            preparedBy
         });
 
         return res.status(201).json({ message: "Created successfully", success: true, data: setting });
@@ -31,7 +32,7 @@ exports.createSetting = async (req, res) => {
 
 exports.updateSetting = async (req, res) => {
     try {
-        const { icon, name, email, phone, address } = req.body;
+        const { icon, name, email, phone, address, preparedBy } = req.body;
 
         const setting = await BillSetting.findOne({ where: { userId: req.user.id } });
 
@@ -39,7 +40,7 @@ exports.updateSetting = async (req, res) => {
             return res.status(404).json({ message: "Setting not found", success: false });
         }
 
-        await setting.update({ icon, name, email, phone, address });
+        await setting.update({ icon, name, email, phone, address, preparedBy });
 
         return res.status(200).json({ message: "Updated successfully", success: true, data: setting });
     } catch (err) {

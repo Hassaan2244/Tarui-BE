@@ -9,10 +9,11 @@ exports.createTransaction = async (req, res) => {
             description,
             amount,
             selectedProducts,
-            paid
+            paid, 
+            preparedBy
         } = req.body;
         if (!ledgerId || !type) {
-            return res.status(400).json({ message: "ledgerId and type are required.", success: false });
+            return res.status(400).json({ message: "Ledger Id and type are required.", success: false });
         }
 
         const latestTransaction = await Transaction.findOne({
@@ -91,6 +92,7 @@ exports.createTransaction = async (req, res) => {
             amount: computedAmount,
             runningBalance,
             prevBalance,
+            preparedBy,
             selectedProducts: selectedProducts || [],
         });
 
@@ -149,7 +151,7 @@ exports.getTransactions = async (req, res) => {
 
 exports.createOpenSellTransaction = async (req, res) => {
     try {
-        const { description, selectedProducts } = req.body;
+        const { description, selectedProducts, preparedBy } = req.body;
 
         if (!Array.isArray(selectedProducts) || selectedProducts.length === 0) {
             return res.status(400).json({
@@ -218,6 +220,7 @@ exports.createOpenSellTransaction = async (req, res) => {
             amount: computedAmount,
             runningBalance,
             selectedProducts,
+            preparedBy,
             paid: true
         });
 
