@@ -26,8 +26,12 @@ const Ledger = sequelize.define("Ledger", {
 
 Ledger.associate = (models) => {
     Ledger.belongsTo(models.User, { foreignKey: "userId" });
-    Ledger.hasMany(models.Transaction, { foreignKey: "ledgerId" });
-};
+    Ledger.hasMany(models.Transaction, {
+        foreignKey: "ledgerId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+        hooks: true,
+      });};
 
 
 module.exports = Ledger;
