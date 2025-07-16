@@ -45,6 +45,11 @@ const Transaction = sequelize.define("Transaction", {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
+    preparedBy: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "admin",
+    },    
     selectedProducts: {
         type: DataTypes.JSONB,
         allowNull: true,

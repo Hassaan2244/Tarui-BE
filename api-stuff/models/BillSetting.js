@@ -27,6 +27,12 @@ const BillSetting = sequelize.define("BillSetting", {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    preparedBy: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+        defaultValue: [],
+        comment: "Array of users who prepared bills",
+    },
 });
 
 BillSetting.associate = (models) => {
