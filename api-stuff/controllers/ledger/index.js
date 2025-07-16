@@ -119,3 +119,80 @@ exports.getLedgerTransactionsByDate = async (req, res) => {
         res.status(500).json({ message: "Server error", error: err.message });
     }
 };
+exports.updateLedger = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description } = req.body;
+
+        if (name === undefined && description === undefined) {
+            return res.status(400).json({ message: "Nothing to update" });
+        }
+
+        if (!id) {
+            return res.status(400).json({ message: "Ledger ID is required" });
+        }
+
+        const ledger = await Ledger.findOne({
+            where: { id, userId: req.user.id },
+        });
+
+        if (!ledger) {
+            return res.status(404).json({ message: "Ledger not found" });
+        }
+
+        if (name && name !== ledger.name) {
+            const duplicate = await Ledger.findOne({
+                where: {
+                    name,
+                    userId: req.user.id,
+                },
+            });
+
+            if (duplicate) {
+                return res.status(409).json({
+                    message: "Another ledger with this name already exists",
+                });
+            }
+        }
+
+        const updateFields = {};
+        if (name && name !== ledger.name) updateFields.name = name;
+        if (description && description !== ledger.description)
+            updateFields.description = description;
+
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(200).json({ message: "No changes detected", ledger });
+        }
+
+        await ledger.update(updateFields);
+
+        res.status(200).json({ message: "Ledger updated", ledger });
+    } catch (err) {
+        console.error("Error updating ledger:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};  
+
+exports.deleteLedger = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ message: "Ledger ID is required" });
+        }
+
+        const deletedCount = await Ledger.destroy({
+            where: { id, userId: req.user.id },
+        });
+
+        if (deletedCount === 0) {
+            return res.status(404).json({ message: "Ledger not found" });
+        }
+
+        res.status(200).json({ message: "Ledger and its transactions deleted" });
+    } catch (err) {
+        console.error("Error deleting ledger:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+  
